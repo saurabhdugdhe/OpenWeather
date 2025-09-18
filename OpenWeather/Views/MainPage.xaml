@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="WeatherApp.Views.MainPage"
+             xmlns:viewModels="clr-namespace:WeatherApp.ViewModels"
+             xmlns:converters="clr-namespace:WeatherApp.Converters"
+             x:DataType="viewModels:WeatherViewModel"
+             BackgroundColor="{DynamicResource PageBackgroundColor}">
+
+    <ContentPage.Resources>
+        <converters:WeatherIconConverter x:Key="WeatherIconConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*" Padding="20">
+        <SearchBar Grid.Row="0"
+                   Placeholder="Enter city name"
+                   Text="{Binding City}"
+                   SearchCommand="{Binding FetchWeatherCommand}"
+                   Margin="0,0,0,20"/>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="20">
+                <Frame CornerRadius="10" Padding="20" BackgroundColor="{DynamicResource FrameBackgroundColor}" HasShadow="True">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding WeatherData.Name, StringFormat='Weather in {0}'}" FontSize="24" FontAttributes="Bold" />
+                        <Image Source="{Binding WeatherData.Weather[0].Icon, Converter={StaticResource WeatherIconConverter}}" HeightRequest="100" WidthRequest="100" />
+                        <Label Text="{Binding WeatherData.Weather[0].Description}" FontSize="18" HorizontalTextAlignment="Center"/>
+                        <Label Text="{Binding WeatherData.Main.Temp, StringFormat='{0:F1}°C'}" FontSize="48" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                        <Label Text="{Binding WeatherData.Main.Feels_like, StringFormat='Feels like {0:F1}°C'}" FontSize="16" HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame CornerRadius="10" Padding="20" BackgroundColor="{DynamicResource FrameBackgroundColor}" HasShadow="True">
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="10">
+                        <Label Grid.Row="0" Grid.Column="0" Text="Humidity" FontAttributes="Bold"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding WeatherData.Main.Humidity, StringFormat='{0}%'}" HorizontalOptions="End" />
+
+                        <Label Grid.Row="1" Grid.Column="0" Text="Wind Speed" FontAttributes="Bold"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding WeatherData.Wind.Speed, StringFormat='{0:F1} m/s'}" HorizontalOptions="End" />
+                    </Grid>
+                </Frame>
+
+                <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" Color="DarkGray" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
